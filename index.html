@@ -7,13 +7,18 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('background-image.jpg');
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      margin: 0;
+      padding: 0;
     }
     .container {
       max-width: 600px;
       margin: 50px auto;
       padding: 20px;
-      background-color: #fff;
+      background-color: rgba(255,255,255,0.8);
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
@@ -43,10 +48,17 @@
       list-style-type: none;
       padding: 0;
       margin: 0;
+      display: flex;
+      flex-wrap: wrap;
     }
     .search-results li {
+      flex: 0 0 25%;
       padding: 10px;
-      border-bottom: 1px solid #ccc;
+      text-align: center;
+    }
+    .search-results li img {
+      max-width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -68,10 +80,10 @@
   searchButton.addEventListener('click', () => {
     const searchTerm = searchInput.value.trim();
     if (searchTerm !== '') {
-      fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=2d5fb1`)
+      fetch(`http://www.omdbapi.com/?apikey=2d5fb1&s=${searchTerm}`)
         .then(response => response.json())
         .then(data => {
-          displayResults(data.results);
+          displayResults(data.Search);
         })
         .catch(error => {
           console.error('Error fetching data:', error);
@@ -81,11 +93,20 @@
 
   function displayResults(results) {
     searchResults.innerHTML = '';
-    results.forEach(movie => {
+    if (results) {
+      results.forEach(movie => {
+        const li = document.createElement('li');
+        const img = document.createElement('img');
+        img.src = movie.Poster === 'N/A' ? 'placeholder.jpg' : movie.Poster;
+        img.alt = movie.Title;
+        li.appendChild(img);
+        searchResults.appendChild(li);
+      });
+    } else {
       const li = document.createElement('li');
-      li.textContent = movie.title;
+      li.textContent = 'No results found';
       searchResults.appendChild(li);
-    });
+    }
   }
 </script>
 
